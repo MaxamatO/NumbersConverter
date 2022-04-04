@@ -7,10 +7,9 @@ import java.util.List;
 public class ConverterOfFun {
 
     public static void main(String[] args) {
-
-        ConverterOfFun converterOfFun = new ConverterOfFun();
-        String textToConvert = "Text and numbers to binary work!@#!@";
-        System.out.println(converterOfFun.toBinary(textToConvert));
+//        ConverterOfFun converterOfFun = new ConverterOfFun();
+//        System.out.println(converterOfFun.toBinary("Continual delighted as elsewhere am convinced unfeeling. And the god said, let it be. And so it happened"));
+//        converterOfFun.toBinary("Continual delighted as elsewhere am convinced unfeeling.");
     }
 
     public int toDecimal(){
@@ -27,13 +26,17 @@ public class ConverterOfFun {
 
 
 
-    public List<String> toBinary(int numberToChange){
+    public String toBinary(int numberToChange){
 
         List<String> result = new ArrayList<>();
 
         if(numberToChange==1){
-            result.add("00000001");
-            return result;
+            result.add("1");
+            return convertToString(result);
+        }
+        if (numberToChange==0){
+            result.add("0");
+            return convertToString(result);
         }
         // Binary conversion process
         // If something is divisible by 2, append 0, else append 1
@@ -53,7 +56,8 @@ public class ConverterOfFun {
 
         // Reverse the list, so the binary goes in the right order
         result=reverse(result);
-        return result;
+        result = Collections.singletonList(removeSpaces(convertToString(result)).trim());
+        return convertToString(result);
     }
 
     // Loop through an array and initialize a new one that is reversed
@@ -94,12 +98,14 @@ public class ConverterOfFun {
         }
         for (Integer i : ints){
             // Append a binary representation of an ASCII value to the String array
-            result.add(convertToString((toBinary(i))));
+            result.add(toBinary(i));
 
         }
         // Convert List to a String
+
         result = Collections.singletonList(removeSpaces(convertToString(result)));
-        return convertToString(result);
+        result = addZeros(result);
+        return convertToString(result).trim();
     }
 
     private String removeSpaces(String data){
@@ -110,4 +116,16 @@ public class ConverterOfFun {
         return replaced;
     }
 
+    /**
+     * Filling data with missing zeros, so that it has 8 digits total
+     */
+    private List<String> addZeros(List<String> data){
+        String result = convertToString(data);
+        String[] split = result.split("\\s+");
+        List<String> withZeros = new ArrayList<>();
+        for (String s:split) {
+            withZeros.add(String.format("%08d", Integer.parseInt(s)));
+        }
+        return withZeros;
+    }
 }
