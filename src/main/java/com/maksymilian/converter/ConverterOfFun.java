@@ -6,9 +6,9 @@ public class ConverterOfFun {
     public static void main(String[] args) {
 
         ConverterOfFun converterOfFun = new ConverterOfFun();
-        String textToConvert = "Example string";
-        System.out.println(converterOfFun.toBinary("Example string     "));
-        System.out.println(converterOfFun.toBinary(103));
+        String textToConvert = "Example   string";
+//        System.out.println(converterOfFun.toBinary("Example string     "));
+        System.out.println(converterOfFun.toBinary(textToConvert));
 //        System.out.println(base62.removeSpaces(base62.toBinary(textToConvert)));
     }
 
@@ -26,7 +26,7 @@ public class ConverterOfFun {
 
 
 
-    public String toBinary(int numberToChange){
+    public List<String> toBinary(int numberToChange){
 
         List<String> result = new ArrayList<>();
         boolean changed = false;
@@ -51,7 +51,7 @@ public class ConverterOfFun {
             numberToChange = numberToChange/2;
         }
         result=reverse(result);
-        return convertToString(result);
+        return result;
     }
 
     public List<String> reverse(List<String> data){
@@ -62,22 +62,24 @@ public class ConverterOfFun {
         return result;
     }
 
-    protected String convertToString(List<String> data){
-
-        StringBuilder result = new StringBuilder();
-        for (String s:data){
-            result.append(s);
-            result.append(" ");
-        }
-
-        return result.toString();
-    }
+//    protected String convertToString(List<String> data){
+////        System.out.println(makeEightDigits(data));
+//        String result ="";
+//        for (int i =0; i < data.size(); i++){
+//            result += data.get(i);
+//            result += " ";
+//        }
+//
+////        result = removeSpaces(result);
+//
+//        return result;
+//    }
 
     public String toBinary(String textToChange){
 
         List<Character> chars = new ArrayList<>();
         List<Integer> ints = new ArrayList<>();
-        List<String> result = new ArrayList<>();
+        StringBuilder result = new StringBuilder();
         for(char c:textToChange.toCharArray()){
             chars.add(c);
         }
@@ -85,18 +87,17 @@ public class ConverterOfFun {
             ints.add((int) aChar);
         }
         for (int i : ints){
-            result.add(toBinary(i));
+            result.append(toBinary(i));
         }
-        return convertToString(result);
+        return removeSpaces(result.toString());
     }
 
-    public String removeSpaces(String toRemove){
-        // TODO: make this a thing...
-        String result = toRemove.replaceAll("  ", "-");
-        result = result.replaceAll(" ", "");
-        result = result.replaceAll("-", " ");
+    public String removeSpaces(String data){
 
-        return result;
+        String replaced = data.replace("  ", "and");
+        replaced = replaced.replace(" ", "");
+        replaced = replaced.replace("and", " ");
+        return replaced;
     }
 
 }
