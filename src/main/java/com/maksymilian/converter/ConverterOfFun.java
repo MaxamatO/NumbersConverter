@@ -4,24 +4,55 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
 public class ConverterOfFun {
 
     public static void main(String[] args) {
-//        ConverterOfFun converterOfFun = new ConverterOfFun();
+        ConverterOfFun converterOfFun = new ConverterOfFun();
 //        System.out.println(converterOfFun.toBinary("Continual delighted as elsewhere am convinced unfeeling. And the god said, let it be. And so it happened"));
 //        converterOfFun.toBinary("Continual delighted as elsewhere am convinced unfeeling.");
+//        System.out.println(converterOfFun.binaryToText("01101000 01100101 01101100 01101111 00100000 01101001 01110100 01110011 00100000 00100000 01101101 01100101"));
+//        System.out.println(converterOfFun.toBinary(1203));
     }
 
-    public int toDecimal(){
-        return 1;
+    public int binaryToDecimal(String binary){
+        int length = binary.length();
+        List<Integer> ints = new ArrayList<>();
+        binary = binary.trim();
+        for (int i=0; i<=length-1; i++){
+            if(binary.charAt(length-1-i)=='1'){
+                ints.add((int) Math.pow(2, i));
+            }
+            else if(binary.charAt(length-i-1)=='0'){
+                ints.add(0);
+            }
+        }
+        int result = 0;
+        for (int i:ints) {
+            result += i;
+        }
+        return result;
     }
 
-    public String toText(){
-        return "decoded";
+    public String binaryToText(String binary){
+        String[] splitBinary = binary.split("\\s+");
+        List<String> chars = new ArrayList<>();
+        for (int i=0; i<=splitBinary.length-1; i++){
+            chars.add(Character.toString((char) binaryToDecimal(splitBinary[i])));
+        }
+        return removeSpaces(convertToString(chars));
     }
 
     public String toBase62(){
         return "encoded";
+    }
+
+    public String toBase64(String toEncode){
+        return "";
+    }
+
+    public String toBase64(int toEncode){
+        return "";
     }
 
 
@@ -31,11 +62,11 @@ public class ConverterOfFun {
         List<String> result = new ArrayList<>();
 
         if(numberToChange==1){
-            result.add("1");
+            result.add("00000001");
             return convertToString(result);
         }
         if (numberToChange==0){
-            result.add("0");
+            result.add("00000000");
             return convertToString(result);
         }
         // Binary conversion process
