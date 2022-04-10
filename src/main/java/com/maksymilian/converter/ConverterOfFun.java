@@ -1,14 +1,17 @@
 package com.maksymilian.converter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class ConverterOfFun {
+    Map<String, String> map = new HashMap<>();
+    String base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
     public static void main(String[] args) {
         ConverterOfFun converterOfFun = new ConverterOfFun();
+        converterOfFun.toBase64("helo madafaka");
 //        System.out.println(converterOfFun.toBinary("Continual delighted as elsewhere am convinced unfeeling. And the god said, let it be. And so it happened"));
 //        converterOfFun.toBinary("Continual delighted as elsewhere am convinced unfeeling.");
 //        System.out.println(converterOfFun.binaryToText("01101000 01100101 01101100 01101111 00100000 01101001 01110100 01110011 00100000 00100000 01101101 01100101"));
@@ -35,6 +38,7 @@ public class ConverterOfFun {
     }
 
     public String binaryToText(String binary){
+
         String[] splitBinary = binary.split("\\s+");
         List<String> chars = new ArrayList<>();
         for (int i=0; i<=splitBinary.length-1; i++){
@@ -47,7 +51,66 @@ public class ConverterOfFun {
         return "encoded";
     }
 
+
+    // TODO: Having a problem with the last char in a sentence
     public String toBase64(String toEncode){
+        List<Integer> asciiValues = new ArrayList<>();
+        List<String> binaryValues;
+        String binaryValuesInString;
+
+
+        for (char c:toEncode.toCharArray()) {
+            asciiValues.add((int) c);
+        }
+
+        binaryValues = asciiValues.stream().map(this::toBinary).collect(Collectors.toList());
+        binaryValues = addZeros(binaryValues);
+        binaryValuesInString = removeSpaces(convertToString(binaryValues));
+
+        List<String> binaryValuesInChars = new ArrayList<>();
+        for (char c:binaryValuesInString.toCharArray()) {
+            binaryValuesInChars.add(String.valueOf(c));
+        }
+
+        int length = binaryValuesInString.length();
+        String removedChars;
+        List<String> removedCharsAsList = new ArrayList<>();
+        for(int i=0; i<=(length%6); i++){
+            removedCharsAsList.add(String.valueOf(binaryValuesInChars.get(length-i-1)));
+            binaryValuesInChars.remove(length-i-1);
+            length -= 1;
+        }
+        removedCharsAsList = reverse(removedCharsAsList);
+        removedChars = removeSpaces(convertToString(removedCharsAsList));
+        removedCharsAsList.clear();
+        removedCharsAsList.add(removedChars);
+        removedCharsAsList = addZerosBase64(removedCharsAsList);
+
+        String combined = convertToString(binaryValuesInChars) +
+                convertToString(removedCharsAsList);
+
+        String combinedNoSpaces = removeSpaces(combined);
+        System.out.println(combinedNoSpaces);
+
+        combinedNoSpaces=splitIntoGroupsOfSix(combinedNoSpaces);
+        System.out.println(combinedNoSpaces);
+
+        List<String> toParse;
+        toParse = Arrays.asList(combinedNoSpaces.split(" "));
+        System.out.println(toParse);
+        List<Integer> ints = new ArrayList<>();
+
+        for(String s:toParse){
+            ints.add(binaryToDecimal(s));
+        }
+        System.out.println(ints);
+        StringBuilder result = new StringBuilder();
+
+        for(int i=0; i<=ints.size()-1; i++){
+            result.append(base64Chars.charAt(ints.get(i)));
+        }
+        System.out.println(result);
+
         return "";
     }
 
@@ -159,4 +222,28 @@ public class ConverterOfFun {
         }
         return withZeros;
     }
+    private List<String> addZerosBase64(List<String> data){
+        String result = convertToString(data);
+        String[] split = result.split("\\s+");
+        List<String> withZeros = new ArrayList<>();
+        for (String s:split) {
+            withZeros.add(String.format("%06d", Integer.parseInt(s)));
+        }
+        return withZeros;
+    }
+    private String splitIntoGroupsOfSix(String data){
+
+        StringBuilder result= new StringBuilder();
+
+        for(int i=0; i<=data.length()-1; i++){
+            if(i%6==0&&i!=0){
+                result.append(" ");
+            }
+            result.append(data.charAt(i));
+        }
+
+        return result.toString();
+    }
 }
+
+
