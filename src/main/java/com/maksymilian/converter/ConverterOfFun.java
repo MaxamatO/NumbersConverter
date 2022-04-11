@@ -11,7 +11,7 @@ public class ConverterOfFun {
 
     public static void main(String[] args) {
         ConverterOfFun converterOfFun = new ConverterOfFun();
-        converterOfFun.toBase64("helo madafaka");
+        converterOfFun.toBase64("example string");
 //        System.out.println(converterOfFun.toBinary("Continual delighted as elsewhere am convinced unfeeling. And the god said, let it be. And so it happened"));
 //        converterOfFun.toBinary("Continual delighted as elsewhere am convinced unfeeling.");
 //        System.out.println(converterOfFun.binaryToText("01101000 01100101 01101100 01101111 00100000 01101001 01110100 01110011 00100000 00100000 01101101 01100101"));
