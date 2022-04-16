@@ -1,21 +1,13 @@
 package com.maksymilian.converter;
 
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class ConverterOfFun {
-    Map<String, String> map = new HashMap<>();
-    String base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
+public class ConverterOfFun implements MaxamatOConverter {
     public static void main(String[] args) {
         ConverterOfFun converterOfFun = new ConverterOfFun();
-        converterOfFun.toBase64("helo madafaka");
-//        System.out.println(converterOfFun.toBinary("Continual delighted as elsewhere am convinced unfeeling. And the god said, let it be. And so it happened"));
-//        converterOfFun.toBinary("Continual delighted as elsewhere am convinced unfeeling.");
-//        System.out.println(converterOfFun.binaryToText("01101000 01100101 01101100 01101111 00100000 01101001 01110100 01110011 00100000 00100000 01101101 01100101"));
-//        System.out.println(converterOfFun.toBinary(1203));
+        System.out.println(converterOfFun.toBase64("Many hands make light  work."));
     }
 
     public int binaryToDecimal(String binary){
@@ -52,7 +44,11 @@ public class ConverterOfFun {
     }
 
 
-    // TODO: Having a problem with the last char in a sentence
+    /**
+     * It is not the greatest converter but it works.
+     * @param toEncode Text to encode
+     * @return Returns a String of base64 encoded input text
+     */
     public String toBase64(String toEncode){
         List<Integer> asciiValues = new ArrayList<>();
         List<String> binaryValues;
@@ -71,55 +67,53 @@ public class ConverterOfFun {
         for (char c:binaryValuesInString.toCharArray()) {
             binaryValuesInChars.add(String.valueOf(c));
         }
+        String groupedIntoSix = splitIntoGroupsOfSix(binaryValuesInString);
+        List<String> listOfSixBits = Arrays.stream(groupedIntoSix.split(" ")).collect(Collectors.toList());
 
-        int length = binaryValuesInString.length();
-        String removedChars;
-        List<String> removedCharsAsList = new ArrayList<>();
-        for(int i=0; i<=(length%6); i++){
-            removedCharsAsList.add(String.valueOf(binaryValuesInChars.get(length-i-1)));
-            binaryValuesInChars.remove(length-i-1);
-            length -= 1;
+        // Checks how many digits are missing
+        String BASE64CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        if(listOfSixBits.get(listOfSixBits.size() - 1).length() == 4){
+            String toFill = listOfSixBits.get(listOfSixBits.size()-1)+"00";
+            listOfSixBits.remove(listOfSixBits.size()-1);
+            listOfSixBits.add(toFill);
+            List<Integer> listOfIntegers = listOfSixBits.stream().map(this::binaryToDecimal).collect(Collectors.toList());
+            List<String> resultList = new ArrayList<>();
+            for(int i =0; i<=listOfIntegers.size()-1; i++){
+                resultList.add(String.valueOf(BASE64CHARS.charAt(listOfIntegers.get(i))));
+            }
+            return removeSpaces(convertToString(resultList))+"=";
         }
-        removedCharsAsList = reverse(removedCharsAsList);
-        removedChars = removeSpaces(convertToString(removedCharsAsList));
-        removedCharsAsList.clear();
-        removedCharsAsList.add(removedChars);
-        removedCharsAsList = addZerosBase64(removedCharsAsList);
 
-        String combined = convertToString(binaryValuesInChars) +
-                convertToString(removedCharsAsList);
-
-        String combinedNoSpaces = removeSpaces(combined);
-        System.out.println(combinedNoSpaces);
-
-        combinedNoSpaces=splitIntoGroupsOfSix(combinedNoSpaces);
-        System.out.println(combinedNoSpaces);
-
-        List<String> toParse;
-        toParse = Arrays.asList(combinedNoSpaces.split(" "));
-        System.out.println(toParse);
-        List<Integer> ints = new ArrayList<>();
-
-        for(String s:toParse){
-            ints.add(binaryToDecimal(s));
+        // Checks how many digits are missing
+        if(listOfSixBits.get(listOfSixBits.size() - 1).length() == 2){
+            String toFill = listOfSixBits.get(listOfSixBits.size()-1)+"0000";
+            listOfSixBits.remove(listOfSixBits.size()-1);
+            listOfSixBits.add(toFill);
+            List<Integer> listOfIntegers = listOfSixBits.stream().map(this::binaryToDecimal).collect(Collectors.toList());
+            List<String> resultList = new ArrayList<>();
+            for(int i =0; i<=listOfIntegers.size()-1; i++){
+                resultList.add(String.valueOf(BASE64CHARS.charAt(listOfIntegers.get(i))));
+            }
+            return removeSpaces(convertToString(resultList))+"==";
         }
-        System.out.println(ints);
-        StringBuilder result = new StringBuilder();
 
-        for(int i=0; i<=ints.size()-1; i++){
-            result.append(base64Chars.charAt(ints.get(i)));
+        List<Integer> listOfIntegers = listOfSixBits.stream().map(this::binaryToDecimal).collect(Collectors.toList());
+        List<String> resultList = new ArrayList<>();
+        for(int i =0; i<=listOfIntegers.size()-1; i++){
+            resultList.add(String.valueOf(BASE64CHARS.charAt(listOfIntegers.get(i))));
         }
-        System.out.println(result);
-
-        return "";
+        return removeSpaces(convertToString(resultList));
     }
 
     public String toBase64(int toEncode){
         return "";
     }
 
-
-
+    /**
+     * Encodes integer into 8 bits binary
+     * @param numberToChange Integer to represent in binary
+     * @return A string of binaries
+     */
     public String toBinary(int numberToChange){
 
         List<String> result = new ArrayList<>();
@@ -176,6 +170,8 @@ public class ConverterOfFun {
      * To convert string to binary, we need to create an array of chars that the input string contains,
      * create an array of integers, that stores ASCII values of specific chars,
      * change these ASCII values into binary and return a list of binaries
+     * @param textToChange Input String that will be changed into binary representation
+     * @return Returns a String of binary representation of textToChange
      */
     public String toBinary(String textToChange){
 
@@ -211,7 +207,10 @@ public class ConverterOfFun {
     }
 
     /**
-     * Filling data with missing zeros, so that it has 8 digits total
+     * Filling data with missing zeros, so that it has 8 digits total.
+     * Meant for binary operations specifically.
+     * @param data List of Strings to fill the zeros to.
+     * @return Returns a List of Strings with filled zeros.
      */
     private List<String> addZeros(List<String> data){
         String result = convertToString(data);
