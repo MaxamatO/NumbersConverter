@@ -3,13 +3,7 @@ package com.maksymilian.converter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
-public class ConverterOfFun{
-    public static void main(String[] args) {
-        ConverterOfFun converterOfFun = new ConverterOfFun();
-        System.out.println(converterOfFun.toBase64("Many hands make light  work."));
-    }
-
+public class ConverterOfFun implements MaxamatOConverter {
     public int binaryToDecimal(String binary){
         int length = binary.length();
         List<Integer> ints = new ArrayList<>();
@@ -217,15 +211,6 @@ public class ConverterOfFun{
         }
         return withZeros;
     }
-    private List<String> addZerosBase64(List<String> data){
-        String result = convertToString(data);
-        String[] split = result.split("\\s+");
-        List<String> withZeros = new ArrayList<>();
-        for (String s:split) {
-            withZeros.add(String.format("%06d", Integer.parseInt(s)));
-        }
-        return withZeros;
-    }
     private String splitIntoGroupsOfSix(String data){
 
         StringBuilder result= new StringBuilder();
@@ -240,5 +225,3 @@ public class ConverterOfFun{
         return result.toString();
     }
 }
-
-
