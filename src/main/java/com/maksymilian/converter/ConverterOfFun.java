@@ -63,10 +63,6 @@ public class ConverterOfFun{
         binaryValues = addZeros(binaryValues);
         binaryValuesInString = removeSpaces(convertToString(binaryValues));
 
-        List<String> binaryValuesInChars = new ArrayList<>();
-        for (char c:binaryValuesInString.toCharArray()) {
-            binaryValuesInChars.add(String.valueOf(c));
-        }
         String groupedIntoSix = splitIntoGroupsOfSix(binaryValuesInString);
         List<String> listOfSixBits = Arrays.stream(groupedIntoSix.split(" ")).collect(Collectors.toList());
 
